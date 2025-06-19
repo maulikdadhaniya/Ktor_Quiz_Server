@@ -8,6 +8,6 @@ data class QuizQuestion(
     val question: String,
     val correctAnswer: String,
     val incorrectAnswers: List<String>,
-    val explanation: Int,
+    val explanation: String,
     val topicCode: Int
 )

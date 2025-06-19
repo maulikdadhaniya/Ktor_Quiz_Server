@@ -1,6 +1,8 @@
 package com.maulik
 
-import com.maulik.config.configureRouting
+import com.maulik.presentation.config.configureLogging
+import com.maulik.presentation.config.configureRouting
+import com.maulik.presentation.config.configureSerialization
 import io.ktor.server.application.*
 
 fun main(args: Array<String>) {
@@ -8,5 +10,7 @@ fun main(args: Array<String>) {
 }
 
 fun Application.module() {
+    configureSerialization()
     configureRouting()
+    configureLogging()
 }
