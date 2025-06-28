@@ -6,6 +6,7 @@ import io.ktor.server.request.receive
 import io.ktor.server.response.respond
 import io.ktor.server.response.respondText
 import io.ktor.server.routing.Route
+import io.ktor.server.routing.delete
 import io.ktor.server.routing.get
 import io.ktor.server.routing.post
 
@@ -15,10 +16,27 @@ fun Route.getAllQuizQuestions() {
     }
 }
 
-fun Route.saveQuizQuestion(){
-    post(path = "/quiz/questions"){
-       val question =  call.receive<QuizQuestion>()
+fun Route.saveQuizQuestion() {
+    post(path = "/quiz/questions") {
+        val question = call.receive<QuizQuestion>()
         quizQuestions.add(question)
         call.respondText("Question save successfully!")
+    }
+}
+
+fun Route.deleteQuizQuestion() {
+    delete(path = "/quiz/questions/{questionId}") {
+        val id = call.parameters["questionId"]
+        quizQuestions.removeIf { it.id == id }
+        call.respondText("Quiz Delete Successfully")
+    }
+}
+
+fun Route.getQuizQuestionById() {
+    get(path = "/quiz/questions/{questionId}") {
+        val id = call.parameters["questionId"]
+        val quizQuestion: QuizQuestion? = quizQuestions.find { it.id == id }
+        if (quizQuestion != null)
+            call.respond(quizQuestion)
     }
 }
