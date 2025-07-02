@@ -8,6 +8,7 @@ import com.maulik.presentation.routes.quiz_question.getAllQuizTopics
 import com.maulik.presentation.routes.quiz_question.getQuizQuestionById
 import com.maulik.presentation.routes.quiz_question.saveQuizQuestion
 import com.maulik.presentation.routes.quiz_question.saveQuizTopic
+import com.maulik.presentation.routes.quiz_question.updateQuizQuestion
 import com.maulik.presentation.routes.root
 import io.ktor.server.application.*
 import io.ktor.server.routing.*
@@ -24,6 +25,7 @@ fun Application.configureRouting() {
         saveQuizQuestion()
         deleteQuizQuestion()
         getQuizQuestionById()
+        updateQuizQuestion()
     }
 }
 
