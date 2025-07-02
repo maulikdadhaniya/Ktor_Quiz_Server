@@ -1,6 +1,6 @@
 package com.maulik.presentation.routes.quiz_question
 
-import com.maulik.domain.QuizTopic
+import com.maulik.domain.model.QuizTopic
 import com.maulik.presentation.config.quizTopics
 import io.ktor.server.request.*
 import io.ktor.server.response.*

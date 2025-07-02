@@ -1,4 +1,4 @@
-package com.maulik.domain
+package com.maulik.domain.model
 
 import kotlinx.serialization.Serializable
 

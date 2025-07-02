@@ -1,19 +1,15 @@
 package com.maulik.presentation.config
 
-import com.maulik.domain.QuizQuestion
-import com.maulik.domain.QuizTopic
-import com.maulik.presentation.routes.quiz_question.deleteQuizQuestion
-import com.maulik.presentation.routes.quiz_question.getAllQuizQuestions
-import com.maulik.presentation.routes.quiz_question.getAllQuizTopics
-import com.maulik.presentation.routes.quiz_question.getQuizQuestionById
-import com.maulik.presentation.routes.quiz_question.saveQuizQuestion
-import com.maulik.presentation.routes.quiz_question.saveQuizTopic
-import com.maulik.presentation.routes.quiz_question.updateQuizQuestion
+import com.maulik.data.repository.QuizQuestionRepositoryImpl
+import com.maulik.domain.model.QuizQuestion
+import com.maulik.domain.model.QuizTopic
+import com.maulik.presentation.routes.quiz_question.*
 import com.maulik.presentation.routes.root
 import io.ktor.server.application.*
 import io.ktor.server.routing.*
 
 fun Application.configureRouting() {
+    val quizQuestionRepositoryImpl = QuizQuestionRepositoryImpl()
     routing {
         root()
         //Quiz Topics
@@ -21,13 +17,12 @@ fun Application.configureRouting() {
         getAllQuizTopics()
 
         //Quiz Questions
-        getAllQuizQuestions()
-        saveQuizQuestion()
-        deleteQuizQuestion()
-        getQuizQuestionById()
-        updateQuizQuestion()
+        getAllQuizQuestions(quizQuestionRepositoryImpl)
+        saveQuizQuestion(quizQuestionRepositoryImpl)
+        deleteQuizQuestion(quizQuestionRepositoryImpl)
+        getQuizQuestionById(quizQuestionRepositoryImpl)
+        /*updateQuizQuestion()*/
     }
 }
 
-var quizQuestions = mutableListOf<QuizQuestion>()
 var quizTopics = mutableListOf<QuizTopic>()

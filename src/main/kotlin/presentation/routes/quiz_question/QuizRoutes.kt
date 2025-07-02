@@ -1,54 +1,93 @@
 package com.maulik.presentation.routes.quiz_question
 
-import com.maulik.domain.QuizQuestion
-import com.maulik.presentation.config.quizQuestions
-import io.ktor.http.HttpStatusCode
-import io.ktor.server.request.receive
-import io.ktor.server.response.respond
-import io.ktor.server.response.respondText
-import io.ktor.server.routing.Route
-import io.ktor.server.routing.delete
-import io.ktor.server.routing.get
-import io.ktor.server.routing.post
-import io.ktor.server.routing.put
+import com.maulik.data.repository.QuizQuestionRepositoryImpl
+import com.maulik.domain.model.QuizQuestion
+import io.ktor.http.*
+import io.ktor.server.request.*
+import io.ktor.server.response.*
+import io.ktor.server.routing.*
 
-fun Route.getAllQuizQuestions() {
+fun Route.getAllQuizQuestions(
+    quizQuestionRepositoryImpl: QuizQuestionRepositoryImpl
+) {
     get(path = "/quiz/questions") {
         val topicCode = call.queryParameters["topicCode"]?.toIntOrNull()
         val limit = call.queryParameters["limit"]?.toIntOrNull()
-        val filterQuestions = quizQuestions
-            .filter { it.topicCode == topicCode }
-            .take(limit ?: 1)
+        val filterQuestions = quizQuestionRepositoryImpl.getAllQuestions(topicCode, limit)
+        if (filterQuestions.isNotEmpty()) {
+            call.respond(
+                message = filterQuestions, status = HttpStatusCode.OK
+            )
+        } else {
+            call.respond(message = "No Quiz Found!", status = HttpStatusCode.NotFound)
+        }
         call.respond(filterQuestions)
     }
 }
 
-fun Route.saveQuizQuestion() {
+fun Route.saveQuizQuestion(
+    repository: QuizQuestionRepositoryImpl
+) {
     post(path = "/quiz/questions") {
         val question = call.receive<QuizQuestion>()
-        quizQuestions.add(question)
-        call.respondText("Question save successfully!")
+        repository.insertQuizQuestion(question)
+        call.respond(
+            message = "Question save successfully!", status = HttpStatusCode.Created
+        )
     }
 }
 
-fun Route.deleteQuizQuestion() {
+fun Route.deleteQuizQuestion(
+    repository: QuizQuestionRepositoryImpl
+) {
     delete(path = "/quiz/questions/{questionId}") {
         val id = call.parameters["questionId"]
-        quizQuestions.removeIf { it.id == id }
-        call.respondText("Quiz Delete Successfully")
+        if (id.isNullOrBlank()) {
+            call.respond(
+                status = HttpStatusCode.BadRequest, message = "questionId needed!"
+            )
+            return@delete
+        }
+        val isDeleted = repository.deleteQuestionById(id)
+
+        if (isDeleted) {
+            call.respond(
+                message = "Quiz Delete Successfully", status = HttpStatusCode.NoContent
+            )
+        } else {
+            call.respond(
+                message = "Quiz not deleted!", status = HttpStatusCode.NotFound
+            )
+        }
+
     }
 }
 
-fun Route.getQuizQuestionById() {
+fun Route.getQuizQuestionById(
+    repository: QuizQuestionRepositoryImpl
+) {
     get(path = "/quiz/questions/{questionId}") {
         val id = call.parameters["questionId"]
-        val quizQuestion: QuizQuestion? = quizQuestions.find { it.id == id }
-        if (quizQuestion != null)
-            call.respond(quizQuestion)
+        if (id.isNullOrBlank()) {
+            call.respond(
+                status = HttpStatusCode.BadRequest, message = "QuestionId needed"
+            )
+            return@get
+        }
+        val quizQuestion: QuizQuestion? = repository.getQuestionById(id)
+        if (quizQuestion != null) {
+            call.respond(
+                message = quizQuestion, status = HttpStatusCode.OK
+            )
+        } else {
+            call.respond(
+                message = "No Quiz Questions", status = HttpStatusCode.NotFound
+            )
+        }
     }
 }
 
-fun Route.updateQuizQuestion() {
+/*fun Route.updateQuizQuestion() {
     put("/quiz/questions/{id}") {
         val id = call.parameters["id"]
         if (id == null) {
@@ -67,4 +106,4 @@ fun Route.updateQuizQuestion() {
         quizQuestions[index] = updatedQuestion
         call.respond(HttpStatusCode.OK, "Quiz question updated successfully.")
     }
-}
+}*/

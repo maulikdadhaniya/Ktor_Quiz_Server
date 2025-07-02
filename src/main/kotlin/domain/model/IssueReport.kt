@@ -1,6 +1,4 @@
-package com.maulik.domain
-
-import javax.xml.stream.events.Comment
+package com.maulik.domain.model
 
 data class IssueReport(
     val id: String? = null,
