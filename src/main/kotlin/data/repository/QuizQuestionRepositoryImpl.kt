@@ -1,5 +1,7 @@
 package com.maulik.data.repository
 
+import com.maulik.data.database.entity.QuizQuestionEntity
+import com.maulik.data.mapper.toQuizQuestionEntity
 import com.maulik.domain.model.QuizQuestion
 import com.maulik.domain.repository.QuizQuestionRepository
 import com.mongodb.client.MongoDatabase
@@ -11,14 +13,12 @@ class QuizQuestionRepositoryImpl(
 ): QuizQuestionRepository {
 
     private val questionCollection = run {
-
         val pojoCodecRegistry = CodecRegistries.fromRegistries(
             mongoDatabase.codecRegistry,
             CodecRegistries.fromProviders(PojoCodecProvider.builder().automatic(true).build())
         )
 
-        // Get collection with proper codec
-        mongoDatabase.getCollection("quiz_questions", QuizQuestion::class.java)
+        mongoDatabase.getCollection("quiz_questions", QuizQuestionEntity::class.java)
             .withCodecRegistry(pojoCodecRegistry)
     }
     var quizQuestions = mutableListOf<QuizQuestion>()
@@ -44,7 +44,7 @@ class QuizQuestionRepositoryImpl(
 
     override suspend fun insertQuizQuestion(quizQuestion: QuizQuestion) {
         quizQuestions.add(quizQuestion)
-        questionCollection.insertOne(quizQuestion)
+        questionCollection.insertOne(quizQuestion.toQuizQuestionEntity())
     }
 
     /*override fun updateQuizQuestion(id: String, quizQuestion: QuizQuestion) {
