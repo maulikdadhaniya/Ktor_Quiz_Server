@@ -1,5 +1,6 @@
 package com.maulik.presentation.config
 
+import com.maulik.data.database.DatabaseFactory
 import com.maulik.data.repository.QuizQuestionRepositoryImpl
 import com.maulik.domain.model.QuizQuestion
 import com.maulik.domain.model.QuizTopic
@@ -9,7 +10,8 @@ import io.ktor.server.application.*
 import io.ktor.server.routing.*
 
 fun Application.configureRouting() {
-    val quizQuestionRepositoryImpl = QuizQuestionRepositoryImpl()
+    val mongoDatabase = DatabaseFactory.create()
+    val quizQuestionRepositoryImpl = QuizQuestionRepositoryImpl(mongoDatabase)
     routing {
         root()
         //Quiz Topics

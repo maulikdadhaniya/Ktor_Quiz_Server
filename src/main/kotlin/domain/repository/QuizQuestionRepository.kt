@@ -3,9 +3,9 @@ package com.maulik.domain.repository
 import com.maulik.domain.model.QuizQuestion
 
 interface QuizQuestionRepository {
-    fun getAllQuestions(topicCode: Int?, limit: Int?): List<QuizQuestion>
-    fun getQuestionById(id: String): QuizQuestion?
-    fun deleteQuestionById(id: String): Boolean
-    fun insertQuizQuestion(quizQuestion: QuizQuestion)
+    suspend fun getAllQuestions(topicCode: Int?, limit: Int?): List<QuizQuestion>
+    suspend fun getQuestionById(id: String): QuizQuestion?
+    suspend fun deleteQuestionById(id: String): Boolean
+    suspend fun insertQuizQuestion(quizQuestion: QuizQuestion)
     /*fun updateQuizQuestion(id: String, quizQuestion: QuizQuestion)*/
 }

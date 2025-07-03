@@ -2,12 +2,28 @@ package com.maulik.data.repository
 
 import com.maulik.domain.model.QuizQuestion
 import com.maulik.domain.repository.QuizQuestionRepository
+import com.mongodb.client.MongoDatabase
+import org.bson.codecs.configuration.CodecRegistries
+import org.bson.codecs.pojo.PojoCodecProvider
 
-class QuizQuestionRepositoryImpl: QuizQuestionRepository {
+class QuizQuestionRepositoryImpl(
+    mongoDatabase: MongoDatabase
+): QuizQuestionRepository {
 
+    private val questionCollection = run {
+
+        val pojoCodecRegistry = CodecRegistries.fromRegistries(
+            mongoDatabase.codecRegistry,
+            CodecRegistries.fromProviders(PojoCodecProvider.builder().automatic(true).build())
+        )
+
+        // Get collection with proper codec
+        mongoDatabase.getCollection("quiz_questions", QuizQuestion::class.java)
+            .withCodecRegistry(pojoCodecRegistry)
+    }
     var quizQuestions = mutableListOf<QuizQuestion>()
 
-    override fun getAllQuestions(
+    override suspend fun getAllQuestions(
         topicCode: Int?,
         limit: Int?
     ): List<QuizQuestion> {
@@ -18,16 +34,17 @@ class QuizQuestionRepositoryImpl: QuizQuestionRepository {
         }
     }
 
-    override fun getQuestionById(id: String): QuizQuestion? {
+    override suspend fun getQuestionById(id: String): QuizQuestion? {
         return quizQuestions.find { it.id == id }
     }
 
-    override fun deleteQuestionById(id: String): Boolean {
+    override suspend fun deleteQuestionById(id: String): Boolean {
         return quizQuestions.removeIf { it.id == id }
     }
 
-    override fun insertQuizQuestion(quizQuestion: QuizQuestion) {
+    override suspend fun insertQuizQuestion(quizQuestion: QuizQuestion) {
         quizQuestions.add(quizQuestion)
+        questionCollection.insertOne(quizQuestion)
     }
 
     /*override fun updateQuizQuestion(id: String, quizQuestion: QuizQuestion) {
