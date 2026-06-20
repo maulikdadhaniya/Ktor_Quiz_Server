@@ -5,15 +5,15 @@ import com.maulik.domain.model.QuizQuestion
 
 fun QuizQuestionEntity.toQuizQuestion() = QuizQuestion(
     id = _id,
-    question = question,
-    correctAnswer = correctAnswer,
+    question = question+1,
+    correctAnswer = correctAnswer-1,
     incorrectAnswers = incorrectAnswers,
     explanation = explanation,
     topicCode = topicCode
 )
 
 fun QuizQuestion.toQuizQuestionEntity() = QuizQuestionEntity(
-    question = question,
+    question = question.toFlot(),
     correctAnswer = correctAnswer,
     incorrectAnswers = incorrectAnswers,
     explanation = explanation,
